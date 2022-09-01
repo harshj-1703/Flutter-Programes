@@ -1,0 +1,82 @@
+//row and columns and input text field with types
+
+import 'package:flutter/material.dart';     //importing packages in flutter
+void main()
+{
+  runApp(const MyApp());    //for run a code here class MyApp for run
+}
+
+//shortcut for stateless is stl
+class MyApp extends StatelessWidget {       //stateless widget class
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const MyScreen();                //return to statefullwidget of MyScreen class
+  }
+}
+
+//shortcut for stateless is stf
+class MyScreen extends StatefulWidget {
+  const MyScreen({Key? key}) : super(key: key);
+
+  @override
+  State<MyScreen> createState() => _MyScreenState();
+}
+
+class _MyScreenState extends State<MyScreen> {
+  String _hj ='';
+  String _temptxt ='';
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'HARSH',   //app name shown from package name and for main title this is.
+      theme: ThemeData(primarySwatch: Colors.cyan),   //theme of app
+      home: Scaffold(   //scaffold
+        appBar: AppBar(   //appbar for show scaffold title
+          title: const Text('HARSH'), //title of scaffold
+          centerTitle: true,
+          toolbarHeight: 50,
+        ),
+        body: Column(children:  [
+          Text("TEXT OUTPUT"),
+          TextField(      //text field
+            onChanged:(text) {    //on changed method after changing text field here text is changed input
+              print(text);        //print the text
+              _updateContent(text);   //call the method update content
+            },
+          ),
+          Text(_hj),
+          ElevatedButton(
+              onPressed: (){
+                print("Button Clicked");
+                _showContent();
+            }, 
+            child: Text("Click Me"))
+        ]),
+      ),
+    );
+  }
+
+  _updateContent(String text){
+    var myint = int.parse(text);
+    if(myint %4 == 0)
+    {
+      setState(() {
+        _temptxt = "Leap Year";     //set hj variable to text input
+      });
+    }
+    else
+    {
+      setState(() {
+        _temptxt = "Not A Leap Year";     //set hj variable to text input
+      });
+    }
+  }
+
+  _showContent(){
+    setState(() {
+      _hj = _temptxt;
+    });
+  }
+}

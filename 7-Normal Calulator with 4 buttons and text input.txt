@@ -1,0 +1,137 @@
+//row and columns and input text field with types
+
+import 'package:flutter/material.dart';     //importing packages in flutter
+void main()
+{
+  runApp(const MyApp());    //for run a code here class MyApp for run
+}
+
+//shortcut for stateless is stl
+class MyApp extends StatelessWidget {       //stateless widget class
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const MyScreen();                //return to statefullwidget of MyScreen class
+  }
+}
+
+//shortcut for stateless is stf
+class MyScreen extends StatefulWidget {
+  const MyScreen({Key? key}) : super(key: key);
+
+  @override
+  State<MyScreen> createState() => _MyScreenState();
+}
+
+class _MyScreenState extends State<MyScreen> {
+  String _hj ='';
+  String _temptxt1 ='';
+  String _temptxt2 ='';
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'CALCULATOR',   //app name shown from package name and for main title this is.
+      theme: ThemeData(primarySwatch: Colors.cyan),   //theme of app
+      home: Scaffold(   //scaffold
+        appBar: AppBar(   //appbar for show scaffold title
+          title: const Text('CALCULATOR'), //title of scaffold
+          centerTitle: true,
+          toolbarHeight: 50,
+        ),
+        body: Column(children:  [
+          Text("\nFirst Value : "),
+          TextField(      //text field
+            // keyboardType: TextInputType.number,
+            onChanged:(text1) {    //on changed method after changing text field here text is changed input
+              print(text1);        //print the text
+              _updateContent1(text1);   //call the method update content
+            },
+          ),
+          Text("\nSecond Value : "),
+          TextField(      //text field
+            // keyboardType: TextInputType.number,
+            onChanged:(text2) {    //on changed method after changing text field here text is changed input
+              print(text2);        //print the text
+              _updateContent2(text2);   //call the method update content
+            },
+          ),
+          Text(_hj+"\n",style: TextStyle(
+            fontSize: 15,
+            // backgroundColor: Colors.black,
+            color: Colors.red,
+            fontWeight: FontWeight.w900,
+          ),),
+          ElevatedButton(
+              onPressed: (){
+                print("Button Clicked");
+                _showContent(1);
+            }, 
+            child: Text("SUM")),
+            ElevatedButton(
+              onPressed: (){
+                print("Button Clicked");
+                _showContent(2);
+            }, 
+            child: Text("SUB")),
+            ElevatedButton(
+              onPressed: (){
+                print("Button Clicked");
+                _showContent(3);
+            }, 
+            child: Text("MUL")),
+            ElevatedButton(
+              onPressed: (){
+                print("Button Clicked");
+                _showContent(4);
+            }, 
+            child: Text("DIV"))
+        ]),
+      ),
+    );
+  }
+
+  _updateContent1(String text){
+    _temptxt1 = text;
+  }
+  _updateContent2(String text){
+    _temptxt2 = text;
+  }
+
+  _showContent(int check){
+    setState(() {
+      if(check == 1)
+      {
+        double c1 = double.parse(_temptxt1);
+        double c2 = double.parse(_temptxt2);
+        double c = (c1+c2);
+        _hj = c.toString();
+        _hj = "\nADDITION IS : $_hj";
+      }
+      else if(check == 2)
+      {
+        double c1 = double.parse(_temptxt1);
+        double c2 = double.parse(_temptxt2);
+        double c = (c1-c2);
+        _hj = c.toString();
+        _hj = "\nSUBTRACTION IS : $_hj";
+      }
+      else if(check == 3)
+      {
+        double c1 = double.parse(_temptxt1);
+        double c2 = double.parse(_temptxt2);
+        double c = (c1*c2);
+        _hj = c.toString();
+        _hj = "\nMULTIPLICAITON IS : $_hj";
+      }
+      else
+      {
+        double c1 = double.parse(_temptxt1);
+        double c2 = double.parse(_temptxt2);
+        double c = (c1/c2);
+        _hj = c.toString();
+        _hj = "\nDIVISION IS : $_hj";
+      }
+    });
+  }
+}
