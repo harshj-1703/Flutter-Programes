@@ -1,5 +1,3 @@
-//hello world type simple program with scaffold and body text
-
 import 'package:flutter/material.dart';     //importing packages in flutter
 
 void main()
