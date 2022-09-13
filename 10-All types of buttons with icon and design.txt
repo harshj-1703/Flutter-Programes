@@ -1,0 +1,119 @@
+//All Types Of Buttons
+
+import 'package:flutter/material.dart';     //importing packages in flutter
+
+void main()
+{
+  runApp(MyApp());    //for run a code here class MyApp for run
+}
+
+//shortcut for stateless is stl
+class MyApp extends StatelessWidget {       //stateless widget class
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MyScreen();                      //return to statefullwidget of MyScreen class
+  }
+}
+
+//shortcut for stateless is stf
+class MyScreen extends StatefulWidget {
+  const MyScreen({Key? key}) : super(key: key);
+
+  @override
+  State<MyScreen> createState() => _MyScreenState();
+}
+
+class _MyScreenState extends State<MyScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'HARSH',   //app name shown from package name and for main title this is.
+      theme: ThemeData(primarySwatch: Colors.cyan),   //theme of app
+      home: Scaffold(   //scaffold
+        appBar: AppBar(   //appbar for show scaffold title
+          title: Text('HARSH'), //title of scaffold
+        ),
+        body: Center(   //body
+        child: Column(children: [
+          ElevatedButton(
+                child: Text('HARSH'),
+                onPressed: () {
+                print('Pressed');
+                },
+                onLongPress: () {
+                print("Long Pressed");
+                },
+                ),
+          ElevatedButton(
+              style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor: Colors.black,
+              shadowColor: Colors.red,
+              textStyle: const TextStyle(
+              color: Colors.black,
+              fontSize: 30,
+              fontStyle: FontStyle.italic),
+              ),
+              onPressed: () {
+              print("Clicked");
+              },
+              child: const Text('Button1')), //ElevatedButton with styleForm
+          ElevatedButton.icon(
+          onPressed: () {
+              print("Clicked");
+              },
+              label: const Text('Call HARSH'),
+              icon: const Icon(Icons.call),
+              ),  //ElevetedButton with Icon
+          OutlinedButton(
+              child: const Text('HARSH.in'),
+              onPressed: () {
+              print('Pressed');
+              },
+              ),
+          OutlinedButton.icon(
+              onPressed: () {
+              print('Pressed');
+              },
+              label: const Text('Visit Website'),
+              icon: const Icon(Icons.web),
+              ),
+          TextButton(
+              child: Text('HARSH.in'),
+              onPressed: () {
+              print('Pressed');
+              }),
+          TextButton.icon(
+              label: const Text('HARSH.in'),
+              icon: const Icon(Icons.email),
+              onPressed: () {
+              print('Pressed');
+              }),
+          InkWell(
+              child: Container(
+              width: 200,
+              height: 80,
+              alignment: Alignment.center,
+              child: const Text('Press This InkWell'),
+              ),
+              onTap: () {
+              // do something
+              print('Pressed');
+              }),
+          InkWell(
+              splashColor: Colors.yellow,
+              highlightColor: Colors.blue,
+              child: const Icon(Icons.add_circle, size: 50),
+              onTap: () {
+              print("Pressed");
+              },
+              ),
+        ],)
+
+        ),
+      ),
+    );
+  }
+}
