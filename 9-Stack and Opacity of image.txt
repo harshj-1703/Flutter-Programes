@@ -1,3 +1,5 @@
+//stack and opacity of an image
+
 import 'package:flutter/material.dart';     //importing packages in flutter
 
 void main()

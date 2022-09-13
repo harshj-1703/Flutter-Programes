@@ -1,3 +1,5 @@
+//Image asset and normal and repeat
+
 import 'package:flutter/material.dart';     //importing packages in flutter
 void main()
 {
