@@ -1,0 +1,199 @@
+import 'dart:async';
+import 'package:flutter/material.dart';     //importing packages in flutter
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+void main()
+{
+  runApp(MyApp());    //for run a code here class MyApp for run
+}
+
+//shortcut for stateless is stl
+class MyApp extends StatelessWidget {       //stateless widget class
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MyScreen();                      //return to statefullwidget of MyScreen class
+  }
+}
+
+//shortcut for stateless is stf
+class MyScreen extends StatefulWidget {
+  const MyScreen({Key? key}) : super(key: key);
+
+  @override
+  State<MyScreen> createState() => _MyScreenState();
+}
+
+class _MyScreenState extends State<MyScreen> {
+  var mytext1 = "";
+  var mytext2 = "";
+  TextEditingController cont1 = TextEditingController();
+  TextEditingController cont2 = TextEditingController();
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'HARSH',   //app name shown from package name and for main title this is.
+      theme: ThemeData(primarySwatch: Colors.cyan),   //theme of app
+      home: Scaffold(   //scaffold
+        appBar: AppBar(   //appbar for show scaffold title
+          title: Text('HARSH'), //title of scaffold
+        ),
+        body: Column(
+          children: [
+            Text("CALCULATOR",
+              style: TextStyle(fontSize: 40,color: Colors.deepOrange,fontFamily: "abc"),
+            ),
+            Image.asset(
+              'assets/images/first.jpg',
+              height: 150,
+              width: 200,
+            ),
+            TextField(
+              controller: cont1,
+              style: TextStyle(color: Colors.blue,fontSize: 20),
+            ),
+            TextField(
+              controller: cont2,
+              style: TextStyle(color: Colors.blue,fontSize: 20),
+            ),
+            // ElevatedButton(
+            //   style: ElevatedButton.styleFrom(
+            //     foregroundColor: Colors.white,
+            //     backgroundColor: Colors.amber,
+            //   ),
+            //   onPressed: (){
+            //   sumpressed();
+            // }, child: Text("SUM")),
+            // ElevatedButton(
+            //   style: ElevatedButton.styleFrom(
+            //     foregroundColor: Colors.white,
+            //     backgroundColor: Colors.amber,
+            //   ),
+            //   onPressed: (){
+            //   subpressed();
+            // }, child: Text("SUB")),
+            ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.amber,
+                ),
+                onPressed: (){
+                save();
+              }, child: const Text("SAVE")),
+            ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.amber,
+                ),
+                onPressed: (){
+              get();
+              }, 
+              child: const Text("GET")),
+          ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.amber,
+              ),
+              onPressed: (){
+              remove();
+            }, child: const Text("REMOVE")),
+            // Text("SUM : "+sum,
+            // style: TextStyle(color: Colors.red,fontSize: 30),),
+            // Text("SUB : "+sub,
+            // style: TextStyle(color: Colors.red,fontSize: 30),),
+            Text("SAVE TEXT 1 : "+mytext1,
+            style: TextStyle(color: Colors.red,fontSize: 20),),
+            Text("SAVE TEXT 2 : "+mytext2,
+            style: TextStyle(color: Colors.red,fontSize: 20),),
+          ],),
+      ),
+    );
+  }
+
+  // sumpressed()
+  // {
+  //   var a = cont1.text;
+  //   var b = cont2.text;
+  //   var c = int.parse(a) + int.parse(b);
+  //   var str = "SUM IS : "+c.toString();
+  //   showToast(str);
+  //   setState(() {
+  //     // txt = "harsh";
+  //     sum = c.toString();
+  //   });
+  // }
+  // subpressed()
+  // {
+  //   var a = cont1.text;
+  //   var b = cont2.text;
+  //   var c = int.parse(a) - int.parse(b);
+  //   var str = "SUB IS : "+c.toString();
+  //   showToast(str);
+  //   setState(() {
+  //     // txt = "harsh";
+  //     sub = c.toString();
+  //   });
+  // }
+  showToast(String str)
+  {
+    Fluttertoast.showToast(
+      msg: str,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.red,
+      textColor: Colors.white,
+      fontSize: 16.0
+    );
+  }
+  showSnackBar(String message)
+  {
+    var SnackBarVariable = SnackBar(content: Text(message),
+      backgroundColor: Colors.deepOrange,
+      behavior: SnackBarBehavior.floating,
+      width: 300,
+      duration: const Duration(seconds: 5),);
+    ScaffoldMessenger.of(context).showSnackBar(SnackBarVariable);
+  }
+  void save() async
+  {
+    // showToast("SAVED");
+    showSnackBar("SAVED");
+    var a = cont1.text;
+    var b = cont2.text;
+    var pref = await SharedPreferences.getInstance();
+    pref.setString('text1',a);
+    pref.setString('text2',b);
+    setState(() {
+      mytext1 = "saved";
+      mytext2 = "saved";
+    });
+    print(a+" "+b);
+  }
+  void get() async
+  {
+    // showToast("GETED");
+    showSnackBar("GETED");
+    var pref = await SharedPreferences.getInstance();
+    final String? text1sr = pref.getString('text1');
+    final String? text2sr = pref.getString('text2');
+    setState(() {
+      mytext1 = text1sr.toString();
+      mytext2 = text2sr.toString();
+    });
+  }
+  void remove() async
+  {
+    // showToast("REMOVED");
+    showSnackBar("REMOVED");
+    var pref = await SharedPreferences.getInstance();
+    await pref.remove('text1');
+    await pref.remove('text2');
+    setState(() {
+      mytext1 = "removed";
+      mytext2 = "removed";
+    });
+  }
+}
