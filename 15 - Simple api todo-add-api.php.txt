@@ -92,6 +92,14 @@ class _MyScreenState extends State<MyScreen> {
                 onPressed: (){
                 apiCall();
               }, child: const Text("API CALL")),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.amber,
+                ),
+                onPressed: (){
+                myprocess1();
+              }, child: const Text("API GET")),
             Text("STATUS : "+mytext1,
             style: TextStyle(color: Colors.red,fontSize: 10),),
             Text("MESSAGE : "+mytext2,
@@ -180,6 +188,18 @@ class _MyScreenState extends State<MyScreen> {
     setState(() {
       mytext1 = 'Response status: ${response.statusCode}';
       mytext2 = 'Response body: ${response.body}';
+    });
+  }
+
+  void myprocess1() async
+  {
+    var url = Uri.parse('https://akashsir.in/myapi/crud/todo-list-api.php');
+    var response = await http.post(url);
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    setState(() {
+      mytext1 = 'Record added: ${response.body}';
     });
   }
 }
