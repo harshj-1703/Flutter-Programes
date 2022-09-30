@@ -194,7 +194,7 @@ class _MyScreenState extends State<MyScreen> {
   void myprocess1() async
   {
     var url = Uri.parse('https://akashsir.in/myapi/crud/todo-list-api.php');
-    var response = await http.post(url);
+    var response = await http.get(url);
     print('Response status: ${response.statusCode}');
     print('Response body: ${response.body}');
 
