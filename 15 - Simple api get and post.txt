@@ -6,7 +6,9 @@ import 'package:http/http.dart' as http;
 
 void main()
 {
-  runApp(MyApp());    //for run a code here class MyApp for run
+  runApp(MaterialApp(home: MyApp(),
+  title: 'HARSH',   //app name shown from package name and for main title this is.
+      theme: ThemeData(primarySwatch: Colors.cyan),));    //for run a code here class MyApp for run
 }
 
 //shortcut for stateless is stl
@@ -34,10 +36,7 @@ class _MyScreenState extends State<MyScreen> {
   TextEditingController cont2 = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'HARSH',   //app name shown from package name and for main title this is.
-      theme: ThemeData(primarySwatch: Colors.cyan),   //theme of app
-      home: Scaffold(   //scaffold
+    return Scaffold(  //scaffold
         appBar: AppBar(   //appbar for show scaffold title
           title: Text('HARSH'), //title of scaffold
         ),
@@ -80,9 +79,8 @@ class _MyScreenState extends State<MyScreen> {
             Text(mytext2,
             style: TextStyle(color: Colors.red,fontSize: 10),),
           ],),
-      ),
-    );
-  }
+          );  
+          }
 
   showToast(String str)
   {
@@ -102,13 +100,13 @@ class _MyScreenState extends State<MyScreen> {
       backgroundColor: Colors.deepOrange,
       behavior: SnackBarBehavior.floating,
       width: 300,
-      duration: const Duration(seconds: 5));
+      duration: const Duration(seconds: 2));
     ScaffoldMessenger.of(context).showSnackBar(SnackBarVariable);
   }
 
   void apiCall() async
   {
-    // showSnackBar("API POSTED");
+    showSnackBar("API POSTED");
     print("api called");
     var a = cont1.text;
     var b = cont2.text;
@@ -130,6 +128,7 @@ class _MyScreenState extends State<MyScreen> {
 
   void myprocess1() async
   {
+    showSnackBar("API GETED");
     var url = Uri.parse('https://akashsir.in/myapi/crud/todo-list-api.php');
     var response = await http.get(url);
     print('Response status: ${response.statusCode}');
