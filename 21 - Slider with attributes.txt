@@ -1,0 +1,68 @@
+// import 'dart:async';
+import 'package:flutter/material.dart';     //importing packages in flutter
+// import 'package:audioplayers/audioplayers.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:http/http.dart' as http;
+// import 'dart:convert';
+
+void main()
+{
+  runApp(MaterialApp(home: MyApp(),
+    title: 'HARSH',   //app name shown from package name and for main title this is.
+    theme: ThemeData(primarySwatch: Colors.cyan),));    //for run a code here class MyApp for run
+}
+
+//shortcut for stateless is stl
+class MyApp extends StatelessWidget {       //stateless widget class
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MyScreen();                      //return to statefullwidget of MyScreen class
+  }
+}
+
+//shortcut for stateless is stf
+class MyScreen extends StatefulWidget {
+  const MyScreen({Key? key}) : super(key: key);
+
+  @override
+  State<MyScreen> createState() => _MyScreenState();
+}
+
+class _MyScreenState extends State<MyScreen> {
+  double currentSliderValue = 0;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(  //scaffold
+        appBar: AppBar(   //appbar for show scaffold title
+          title: Text('HARSH'), //title of scaffold
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Slider(
+                min: 0,
+                max: 10,
+                divisions: 10,
+                activeColor: Colors.blueAccent,
+                thumbColor: Colors.amber,
+                value: currentSliderValue, 
+                onChanged: ((value) {
+                  setState(() {
+                    currentSliderValue = value;
+                  });
+                  print('$currentSliderValue');
+              }),
+              onChangeStart: (value) => print('Value At Start : $value'),
+              onChangeEnd: (value) => print('Value At End : $value'),
+              ),
+              Text('$currentSliderValue'),
+          ],),
+
+        ),
+      );  
+      }
+}
