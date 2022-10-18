@@ -1,0 +1,111 @@
+//TASK-1 -> Counter App with Local Data.
+import 'dart:async';
+import 'dart:developer';
+import 'package:flutter/material.dart';     //importing packages in flutter
+import 'package:shared_preferences/shared_preferences.dart';
+void main()
+{
+  runApp(const MyApp());    //for run a code here class MyApp for run
+}
+
+//shortcut for stateless is stl
+class MyApp extends StatelessWidget {       //stateless widget class
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const MyScreen();                //return to statefullwidget of MyScreen class
+  }
+}
+
+//shortcut for stateless is stf
+class MyScreen extends StatefulWidget {
+  const MyScreen({Key? key}) : super(key: key);
+
+  @override
+  State<MyScreen> createState() => _MyScreenState();
+}
+
+class _MyScreenState extends State<MyScreen> {
+  int counter = 0;
+  void initState()		//Method which runs automatically things inner this when app started.
+  {
+    get();
+  }
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'HARSH',   //app name shown from package name and for main title this is.
+      theme: ThemeData(primarySwatch: Colors.cyan),   //theme of app
+      home: Scaffold(   //scaffold
+        appBar: AppBar(   //appbar for show scaffold title
+          title: const Text('HARSH'), //title of scaffold
+          centerTitle: true,
+          toolbarHeight: 50,
+        ),
+        body: Column(
+          children :[
+            Center(
+            heightFactor: 25,
+            child: Text("COUNTER : $counter",
+            style: const TextStyle(
+                color: Colors.blue,
+                fontSize: 15,
+                fontWeight: FontWeight.w900,
+                fontStyle: FontStyle.italic,
+                fontFamily: 'Times New Roman',),),
+      ),
+
+      ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          shape: CircleBorder(),
+        ),
+          onPressed: (){
+            add();
+            print("+");
+        }, 
+        child: Text("+",style: TextStyle(fontSize: 40,color: Colors.white),)),
+
+      ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          shape: CircleBorder(),
+        ),
+          onPressed: (){
+            sub();
+            print("-");
+        }, 
+        child: Text("-",style: TextStyle(fontSize: 40,color: Colors.white),)),
+      
+      ],),
+        ),
+    );
+  }
+
+void add() async
+{
+  var pref = await SharedPreferences.getInstance();
+  pref.setInt('counter', counter+1);
+  setState(() {
+    counter+=1;
+  });
+}
+
+void sub() async
+{
+  var pref = await SharedPreferences.getInstance();
+  pref.setInt('counter', counter-1);
+  setState(() {
+    counter-=1;
+  });
+}
+
+void get() async
+{
+  var pref = await SharedPreferences.getInstance();
+  final int? count = pref.getInt('counter');
+  print(count);
+  setState(() {
+    counter = count!;
+  });
+}
+}

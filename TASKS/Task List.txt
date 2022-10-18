@@ -1,0 +1,25 @@
+1-Counter App with Local Data.
+2-Take Values from User Name,Email,password,Mobile Store in local Data.
+	 Create Login page and match details with local data.
+	 If Details are matched then Redirect on Home Screen and Display Name
+	 else print error message in Toast.
+3-Todo App 
+		OneTextFied and Display Data in ListView,Delete Button.
+		3.1(Array)
+		3.2(SharedPref.)
+4-Music Player (Single)
+	Load Local MP3 Song and 
+	Add Various Button for Play,Pause,Stop 
+	Slider for Volume and Second Slider for Seekbar
+	Background Image
+5-Display ListView of Songs(5) and OnClick of Song Play in Second Screen.
+6-Create Signup Form and Store Details in API and also in SharedPref.
+7-Create Form having all Widget which help to take values from user.
+	Text,TextField,Switch,Slider,DatePicker,TimePicker,Button,CheckBox,Radio and OnSubmit 
+	Print Value.
+8-ListView Builder Display JSON API Data.
+	Take 3 Different API.
+9-Take a Color Name from user and Display Background color same a users Value.
+10- Weather App (CityName,Current Weather)
+	https://openweathermap.org/
+11-FireBase CRUD Operation.
