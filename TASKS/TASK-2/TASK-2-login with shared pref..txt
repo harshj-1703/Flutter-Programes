@@ -1,0 +1,406 @@
+/*TASK-2 -> Take Values from User Name,Email,password,Mobile Store in local Data.
+Create Login page and match details with local data.
+If Details are matched then Redirect on Home Screen and Display Name
+else print error message in Toast.
+*/
+import 'dart:async';
+import 'package:flutter/material.dart';     //importing packages in flutter
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+
+void main()
+{
+  runApp(MaterialApp(home: MyApp(),
+  title: 'LOGIN APP',   //app name shown from package name and for main title this is.
+      theme: ThemeData(primarySwatch: Colors.cyan),));    //for run a code here class MyApp for run
+}
+
+//shortcut for stateless is stl
+class MyApp extends StatelessWidget {       //stateless widget class
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return LoginScreen();                      //return to statefullwidget of MyScreen class
+  }
+}
+
+//shortcut for stateful is stf
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({Key? key}) : super(key: key);
+
+  @override
+  State<LoginScreen> createState() => _MyScreenState();
+}
+
+class _MyScreenState extends State<LoginScreen> {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  @override
+  void initState() {
+    goDashboard();
+  }
+  Widget build(BuildContext context) {
+    return Scaffold(  //scaffold
+        appBar: AppBar(   //appbar for show scaffold title
+          title: Text('LOGIN APP'), //title of scaffold
+          automaticallyImplyLeading: false,
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(10),
+          child: ListView(
+          children: <Widget>[
+            Container(
+                alignment: Alignment.center,
+                padding: const EdgeInsets.all(10),
+                child: const Text(
+                  'LOGIN',
+                  style: TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 30),
+                )),
+            Container(
+              padding: const EdgeInsets.all(10),
+              child: TextField(
+                keyboardType: TextInputType.emailAddress,
+                maxLength: 40,
+                controller: emailController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(width: 2,color: Colors.amber),
+                  ),
+                  labelText: 'Email',
+                ),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+              child: TextField(
+                obscureText: true,
+                maxLength: 20,
+                controller: passwordController,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(width: 2,color: Colors.amber),
+                  ),
+                  labelText: 'Password',
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                //forgot password screen
+                showSnackBar("Forgot Password");
+              },
+              child: const Text('Forgot Password',),
+            ),
+            Container(
+                height: 50,
+                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                child: ElevatedButton(
+                  child: const Text('Login'),
+                  onPressed: () {
+                    check();
+                  },
+                )
+            ),
+            Row(
+              // ignore: sort_child_properties_last
+              children: <Widget>[
+                const Text('Does not have account?'),
+                TextButton(
+                  child: const Text(
+                    'Sign in',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  onPressed: () {
+                    //signup screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const SignUpScreen()),
+                    );
+                  },
+                )
+              ],
+              mainAxisAlignment: MainAxisAlignment.center,
+            ),
+          ],
+        )
+        )
+      );  
+      }
+showSnackBar(String message)
+{
+  var SnackBarVariable = SnackBar(content: Text(message),
+    backgroundColor: Colors.deepOrange,
+    behavior: SnackBarBehavior.floating,
+    width: 300,
+    duration: const Duration(seconds: 2));
+  ScaffoldMessenger.of(context).showSnackBar(SnackBarVariable);
+}
+void check() async
+{
+  var enteredEmail = emailController.text;
+  var enteredPassword= passwordController.text;
+  var pref = await SharedPreferences.getInstance();
+  final String? email = pref.getString('email');
+  final String? password = pref.getString('password');
+
+  if(email == enteredEmail && password == enteredPassword)
+  {
+    showSnackBar("logged in");
+    pref.setBool('logged',true);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const Dashboard()),
+    );
+  }
+  else if(email == enteredEmail)
+  {
+    showSnackBar("password wrong");
+  }
+  else
+  {
+    showSnackBar("not registered");
+  }
+}
+void goDashboard() async
+{
+  var pref = await SharedPreferences.getInstance();
+  final bool? logged = pref.getBool('logged');
+  if(logged == true)
+  {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const Dashboard()),
+    );
+  }
+}
+}
+
+
+//SignUp Screen Class
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
+
+  @override
+  State<SignUpScreen> createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
+  TextEditingController nameText = TextEditingController();
+  TextEditingController emailText = TextEditingController();
+  TextEditingController mobileText = TextEditingController();
+  TextEditingController passwordText = TextEditingController();
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(  //scaffold
+        appBar: AppBar(   //appbar for show scaffold title
+          title: Text('SIGNUP'), //title of scaffold
+          automaticallyImplyLeading: false,
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(10),
+          child: ListView(
+          children: <Widget>[
+            Container(
+                alignment: Alignment.center,
+                padding: const EdgeInsets.all(10),
+                child: const Text(
+                  'SIGNUP',
+                  style: TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 30),
+                )),
+              Container(
+                padding: const EdgeInsets.all(10),
+                child: TextField(
+                  maxLength: 50,
+                  controller: nameText,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(width: 2,color: Colors.amber),
+                    ),
+                    labelText: 'Name',
+                  ),
+                ),
+            ),
+            Container(
+              padding: const EdgeInsets.all(10),
+              child: TextField(
+                keyboardType: TextInputType.emailAddress,
+                maxLength: 40,
+                controller: emailText,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(width: 2,color: Colors.amber),
+                  ),
+                  labelText: 'Email',
+                ),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+              child: TextFormField(
+                obscureText: true,
+                maxLength: 20,
+                controller: passwordText,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(width: 2,color: Colors.amber),
+                  ),
+                  labelText: 'Password',
+                ),
+              ),
+            ),
+            Container(
+                padding: const EdgeInsets.all(10),
+                child: TextFormField(
+                  maxLength: 10,
+                  controller: mobileText,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(width: 2,color: Colors.amber),
+                    ),
+                    labelText: 'Mobile Number',
+                  ),
+                ),
+            ),
+            Container(
+                height: 50,
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                child: ElevatedButton(
+                  child: const Text('SignUp'),
+                  onPressed: () {
+                    save();
+                  },
+                )
+            ),
+          ],
+        )
+        )
+      );  
+  }
+
+void save() async
+{
+  showSnackBar("REGISTERED!");
+  var name = nameText.text;
+  var email = emailText.text;
+  var mobile = mobileText.text;
+  var password= passwordText.text;
+  var pref = await SharedPreferences.getInstance();
+  pref.setString('name',name);
+  pref.setString('email',email);
+  pref.setString('mobile',mobile);
+  pref.setString('password',password);
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => const LoginScreen()),
+  );
+}
+showSnackBar(String message)
+{
+  var SnackBarVariable = SnackBar(content: Text(message),
+    backgroundColor: Colors.deepOrange,
+    behavior: SnackBarBehavior.floating,
+    width: 300,
+    duration: const Duration(seconds: 2));
+  ScaffoldMessenger.of(context).showSnackBar(SnackBarVariable);
+}
+}
+
+
+//Dashboard Class
+class Dashboard extends StatefulWidget {
+  const Dashboard({super.key});
+
+  @override
+  State<Dashboard> createState() => _DashboardState();
+}
+
+class _DashboardState extends State<Dashboard> {
+  String name = '';
+  String email = '';
+  String mobile = '';
+  @override
+  void initState() {
+    getDashboard();
+  }
+  Widget build(BuildContext context) {
+    return Scaffold(  //scaffold
+        appBar: AppBar(   //appbar for show scaffold title
+          title: Text('DASHBOARD'), //title of scaffold
+          automaticallyImplyLeading: false,
+        ),
+        body: Center(
+          child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+            children: [Text(name,
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 25,
+                      fontFamily: "Times New Roman",
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                Text(email,
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontSize: 20,
+                  fontFamily: "Times New Roman",
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.w900,
+                  ),), 
+                Text(mobile,
+                  style: TextStyle(
+                    color: Colors.green,
+                    fontSize: 10,
+                    fontFamily: "Times New Roman",
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w900,
+                  ),),
+                  ElevatedButton(
+                      onPressed: (){
+                        logout();
+                    }, 
+                      child: Text("LOGOUT")),
+                  ],
+          ),
+        ), 
+      );
+  }
+
+void getDashboard() async
+{
+  var pref = await SharedPreferences.getInstance();
+  final String? getName = pref.getString('name');
+  final String? getEmail = pref.getString('email');
+  final String? getMobile = pref.getString('mobile');
+  setState(() {
+    name = getName!;
+    email = getEmail!;
+    mobile = getMobile!;
+  });
+}
+void logout() async
+{
+  var pref = await SharedPreferences.getInstance();
+  pref.setBool('logged',false);
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => const LoginScreen()),
+  );
+}
+}
