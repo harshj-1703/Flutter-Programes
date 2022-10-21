@@ -1,0 +1,237 @@
+import 'dart:async';
+import 'package:flutter/material.dart';     //importing packages in flutter
+// import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:http/http.dart' as http;
+// import 'dart:convert';
+
+void main()
+{
+  runApp(MaterialApp(home: MainScreen(),
+    title: 'TODO APP',   //app name shown from package name and for main title this is.
+    theme: ThemeData(primarySwatch: Colors.cyan),));    //for run a code here class MyApp for run
+}
+
+class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
+
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  @override
+  String add_title = '';
+  String add_detail = '';
+  TextEditingController add_title_controller = TextEditingController();
+  TextEditingController add_detail_controller = TextEditingController();
+
+  Widget build(BuildContext context) {
+    return Scaffold(  //scaffold
+        appBar: AppBar(   //appbar for show scaffold title
+          title: Text('TODO ADD'), //title of scaffold
+          automaticallyImplyLeading: false,
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(10),
+          child: ListView(
+          children: <Widget>[
+            Container(
+                alignment: Alignment.center,
+                padding: const EdgeInsets.all(10),
+                child: const Text(
+                  'ADD TODO TASK',
+                  style: TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 30),
+                )),
+            Container(
+              padding: const EdgeInsets.all(10),
+              child: TextField(
+                maxLength: 20,
+                controller: add_title_controller,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(width: 2,color: Colors.amber),
+                  ),
+                  labelText: 'TODO TITLE',
+                ),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+              child: TextField(
+                maxLength: 40,
+                controller: add_detail_controller,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(width: 2,color: Colors.amber),
+                  ),
+                  labelText: 'TODO DETAILS',
+                ),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.all(10),
+            ),
+            Container(
+                height: 50,
+                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                child: ElevatedButton(
+                  child: const Text('ADD TASK'),
+                  onPressed: () {
+                    add();
+                    showSnackBar("TODO TASK ADDED");
+                  },
+                )
+            ),
+            Container(
+              padding: EdgeInsets.all(10),
+            ),
+            Container(
+                height: 50,
+                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                child: ElevatedButton(
+                  child: const Text('SHOW TASKS'),
+                  onPressed: () {
+                     Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const TasksScreen()),
+                      );
+                  },
+                )
+            ),
+          ],
+        )
+        )
+      );  
+  }
+
+void add() async
+{
+  var title1 = add_title_controller.text;
+  var detail1 = add_detail_controller.text;
+  var pref = await SharedPreferences.getInstance();
+  final List<String>? todo_title = pref.getStringList('todo_title');
+  final List<String>? todo_detail = pref.getStringList('todo_detail');
+  List<String> title = todo_title ?? [];
+  List<String> detail = todo_detail ?? [];
+
+  title.add(title1);
+  detail.add(detail1);
+
+  print(title);
+  print(detail);
+  pref.setStringList('todo_title',title);
+  pref.setStringList('todo_detail',detail);
+}
+
+showSnackBar(String message)
+{
+  var SnackBarVariable = SnackBar(content: Text(message),
+    backgroundColor: Colors.deepOrange,
+    behavior: SnackBarBehavior.floating,
+    width: 300,
+    duration: const Duration(seconds: 1));
+  ScaffoldMessenger.of(context).showSnackBar(SnackBarVariable);                     //return to statefullwidget of MyScreen class
+}
+}
+
+//Tasks Screen
+// shortcut for stateless is stf
+class TasksScreen extends StatefulWidget {
+  const TasksScreen({Key? key}) : super(key: key);
+
+  @override
+  State<TasksScreen> createState() => _MyScreenState();
+}
+
+class _MyScreenState extends State<TasksScreen> {
+  var todo_title = [];
+  var todo_detail= [];
+  @override
+  void initState() {
+    get_array();
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(  //scaffold
+        appBar: AppBar(   //appbar for show scaffold title
+          title: Text('TODO TASKS'), //title of scaffold
+        ),
+        body: ListView.builder(
+              itemCount: todo_title.length,
+              itemBuilder: (context,index){
+                int reverseListIndex = todo_title.length - 1 - index;
+                return Card(
+                  child: ListTile(
+                      title: Text(todo_title[reverseListIndex]),
+                      subtitle: Text("Detail : ${todo_detail[reverseListIndex]}"),
+                      trailing: IconButton(onPressed: (){
+                        showSnackBar("Deleted Item ${todo_title[reverseListIndex]}");
+                        setState(() {
+                          remove(reverseListIndex);
+                        });
+                      }, icon: Icon(Icons.delete_forever,color: Colors.red,),
+                    ),
+                    ),
+              );
+            },
+          ),
+      );  
+  }
+
+showSnackBar(String message)
+{
+  var SnackBarVariable = SnackBar(content: Text(message),
+    backgroundColor: Colors.deepOrange,
+    behavior: SnackBarBehavior.floating,
+    width: 300,
+    duration: const Duration(seconds: 1));
+  ScaffoldMessenger.of(context).showSnackBar(SnackBarVariable);
+}
+
+void get_array() async
+{
+  var pref = await SharedPreferences.getInstance();
+  final List<String>? todo_title1 = pref.getStringList('todo_title');
+  final List<String>? todo_detail1 = pref.getStringList('todo_detail');
+  if(todo_title1 != null || todo_detail1 != null)
+  {
+    setState(() {
+      todo_title = todo_title1!;
+      todo_detail = todo_detail1!;
+    });
+  }
+}
+
+void remove(index) async
+{
+  var pref = await SharedPreferences.getInstance();
+  final List<String>? todo_title1 = pref.getStringList('todo_title');
+  final List<String>? todo_detail1 = pref.getStringList('todo_detail');
+  List<String> title = todo_title1 ?? [];
+  List<String> detail = todo_detail1 ?? [];
+
+  title.removeAt(index);
+  detail.removeAt(index);
+
+  pref.setStringList('todo_title',title);
+  pref.setStringList('todo_detail',detail);
+
+  final List<String>? todo_title2 = pref.getStringList('todo_title');
+  final List<String>? todo_detail2 = pref.getStringList('todo_detail');
+
+  if(todo_title2 != null || todo_detail2 != null)
+  {
+    setState(() {
+      todo_title = todo_title2!;
+      todo_detail = todo_detail2!;
+    });
+  }
+}
+
+}
