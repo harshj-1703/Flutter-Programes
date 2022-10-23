@@ -1,0 +1,217 @@
+/*
+TASK-4-Music Player (Single)
+	Load Local MP3 Song and 
+	Add Various Button for Play,Pause,Stop 
+	Slider for Volume and Second Slider for Seekbar
+	Background Image
+*/
+// import 'dart:async';
+import 'package:flutter/material.dart';     //importing packages in flutter
+import 'package:audioplayers/audioplayers.dart';
+import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
+import 'package:flutter/src/material/slider.dart';
+import 'package:perfect_volume_control/perfect_volume_control.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:http/http.dart' as http;
+// import 'dart:convert';
+
+void main()
+{
+  runApp(MaterialApp(home: MyApp(),
+    title: 'MUSIC APP',   //app name shown from package name and for main title this is.
+    theme: ThemeData(primarySwatch: Colors.cyan),));    //for run a code here class MyApp for run
+}
+
+//shortcut for stateless is stl
+class MyApp extends StatelessWidget {       //stateless widget class
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MyScreen();                      //return to statefullwidget of MyScreen class
+  }
+}
+
+//shortcut for stateless is stf
+class MyScreen extends StatefulWidget {
+  const MyScreen({Key? key}) : super(key: key);
+
+  @override
+  State<MyScreen> createState() => _MyScreenState();
+}
+
+class _MyScreenState extends State<MyScreen> {
+  final audioPlayer = AudioPlayer();
+  String audiopath = "music/1.mp3";
+  double volume = 0;
+
+  bool isPlaying = false;
+  Duration duration = Duration.zero;
+  Duration position = Duration.zero;
+
+  @override
+  void initState() {
+    super.initState();
+    setAudio();
+    getVolume();
+
+    audioPlayer.onPlayerStateChanged.listen((event) {
+      setState(() {
+        isPlaying = event == PlayerState.playing;
+      });
+    });
+
+    audioPlayer.onDurationChanged.listen((newDuration) {
+      setState(() {
+        duration = newDuration;
+      });
+    });
+
+    audioPlayer.onPositionChanged.listen((newPosition) {
+      setState(() {
+        position = newPosition;
+      });
+    });
+  }
+
+  Future setAudio() async
+  {
+    audioPlayer.setReleaseMode(ReleaseMode.loop);
+  }
+
+  @override
+  void dispose() {
+    audioPlayer.dispose();
+    super.dispose();
+  }
+  Widget build(BuildContext context) {
+    return Scaffold(  //scaffold
+        appBar: AppBar(   //appbar for show scaffold title
+          title: Text('MUSIC APP'), //title of scaffold
+        ),
+        body: Column(
+          children: [
+            Padding(
+            padding: const EdgeInsets.fromLTRB(0,35,0,20),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    RotatedBox(quarterTurns: 3,
+                    //Volumn Slider
+                      child: Slider(
+                        min: 0,
+                        max: 1.0,
+                        value: volume,
+                        onChanged: (value) async
+                        {
+                          setVolume(value);
+                        },
+                      ),
+                    ),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Image.network(
+                        'https://www.bollywoodhungama.com/wp-content/uploads/2022/05/KGF-%E2%80%93-Chapter-2-Box-Office-Film-crosses-Rs.-1200-cr.-at-worldwide-box-office-ranks-as-third-highest-all-time-worldwide-grosser-620x450-5.jpg',
+                        width: 300,
+                        height: 320,
+                        fit: BoxFit.cover,
+                    ),
+                  ),
+                ],  
+              ),
+
+                const SizedBox(height: 32,),
+                const Text(
+                  'KGF BGM',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4,),
+                const Text(
+                  'KGF BGM',
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
+                ),
+                Slider(
+                  min: 0,
+                  max: duration.inSeconds.toDouble(),
+                  value: position.inSeconds.toDouble(),
+                  onChanged: (value) async
+                  {
+                    final position = Duration(seconds: value.toInt());
+                    await audioPlayer.seek(position);
+
+                    // await audioPlayer.resume();
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(formatTime(position)),
+                      Text(formatTime(duration - position)),
+                    ],
+                  ),  
+                ),
+                CircleAvatar(
+                  radius: 35,
+                  child: IconButton(
+                    icon: Icon(
+                      isPlaying ? Icons.pause : Icons.play_arrow,
+                    ),
+                    iconSize: 50,
+                    onPressed: () async {
+                      if(isPlaying)
+                      {
+                        await audioPlayer.pause();
+                      }
+                      else
+                      {
+                        await audioPlayer.play(AssetSource(audiopath));
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ),
+        ),
+        ],
+      ),  
+    );  
+  }
+
+String formatTime(Duration duration)
+{
+  String twoDigits(int n) => n.toString().padLeft(2,'0');
+  final hours = twoDigits(duration.inHours);
+  final minute = twoDigits(duration.inMinutes.remainder(60));
+  final seconds = twoDigits(duration.inSeconds.remainder(60));
+
+  return[
+    if(duration.inHours > 0) hours,
+    minute,
+    seconds,
+  ].join(':');
+}
+
+void setVolume(value) async
+{
+  await PerfectVolumeControl.setVolume(value);
+  getVolume();
+}
+
+getVolume() async
+{
+  double _volume = await PerfectVolumeControl.getVolume();
+  setState(() {
+    volume = _volume;
+  });
+}
+
+}
