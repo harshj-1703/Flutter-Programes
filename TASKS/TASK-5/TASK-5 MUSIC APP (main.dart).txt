@@ -1,0 +1,380 @@
+/*
+TASK-5 GET ALL MUSICS FROM STORAGE AND LIST AND PLAY EACH IN NEW SCREEN
+*/
+import 'dart:math';
+
+import 'package:JAY_SHREE_RAM/about.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';     //importing packages in flutter
+// import 'package:audioplayers/audioplayers.dart';
+// import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
+import 'package:on_audio_query/on_audio_query.dart';
+// import 'dart:async';
+import 'song.dart';
+// import 'about.dart';
+// import 'package:path/path.dart';
+// import 'dart:io';
+// import 'package:file_picker/file_picker.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:http/http.dart' as http;
+// import 'dart:convert';
+
+void main()
+{
+  runApp(MaterialApp(home: MyApp(),
+    title: 'MUSIC',   //app name shown from package name and for main title this is.
+    theme: ThemeData(primarySwatch: Colors.cyan),));    //for run a code here class MyApp for run
+}
+
+//shortcut for stateless is stl
+class MyApp extends StatelessWidget {       //stateless widget class
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MyScreen();                      //return to statefullwidget of MyScreen class
+  }
+}
+
+//shortcut for stateless is stf
+class MyScreen extends StatefulWidget {
+  const MyScreen({Key? key}) : super(key: key);
+
+  @override
+  State<MyScreen> createState() => _MyScreenState();
+}
+
+class _MyScreenState extends State<MyScreen> {
+
+  final OnAudioQuery _audioQuery = OnAudioQuery();
+  TextEditingController searchController = TextEditingController();
+  List<SongModel> filterSongs = [];
+
+  @override
+  void initState() {
+    super.initState();
+    requestStoragePermission();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(  //scaffold
+      backgroundColor: Colors.transparent,
+        appBar: AppBar(   //appbar for show scaffold title
+            iconTheme: IconThemeData(color: Colors.white,size: 32),
+            centerTitle: true,
+            title: Text('MUSIC',style: TextStyle(color: Colors.white,fontSize: 28,fontFamily: 'Times New Roman',fontWeight: FontWeight.bold),), //title of scaffold
+            backgroundColor: Color.fromARGB(255, 29, 69, 214),
+          ),
+          drawer: Drawer(
+            child: Container(
+              color: Color.fromARGB(255, 202, 234, 247),
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  SizedBox(
+                    height: 150.0,
+                    child: DrawerHeader(
+                        // ignore: sort_child_properties_last
+                        child: Row(
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: Image.network('https://www.freepnglogos.com/uploads/apple-music-logo-circle-png-28.png',height: 60,width: 60,),
+                            ),
+                              // Icon(Icons.music_note,size: 32,color: Colors.white,),
+                            const Padding(padding: EdgeInsets.all(7),
+                              child: Text('MUSIC', style: TextStyle(color: Colors.white,
+                                          fontSize: 30,fontFamily: 'Times New Roman',fontWeight: FontWeight.bold)),
+                            ),
+                          ],
+                        ),
+                        decoration: const BoxDecoration(
+                          color: Color.fromARGB(255, 29, 69, 214),
+                        ),
+                      ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.all(5),
+                    color: Colors.lightBlueAccent,
+                    child: ListTile(
+                      leading: Icon(Icons.home,size: 30,color: Color.fromARGB(255, 15, 5, 111),),
+                      title: const Text('HOME',style: TextStyle(fontFamily: 'Times New Roman',
+                            fontSize: 25,color: Color.fromARGB(255, 15, 5, 111),fontWeight: FontWeight.w700),),
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.alternate_email,size: 30,color: Color.fromARGB(255, 15, 5, 111),),
+                    title: const Text('ABOUT',style: TextStyle(fontFamily: 'Times New Roman',
+                            fontSize: 25,color: Color.fromARGB(255, 15, 5, 111),fontWeight: FontWeight.w700),),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const AboutScreen()),
+                      );
+                    },
+                  ),
+                  ListTile(),ListTile(),ListTile(),ListTile(),ListTile(),ListTile(),ListTile(),
+                  const ListTile(
+                    contentPadding: EdgeInsets.fromLTRB(75,35,0,0),
+                    title: Text("MADE IN INDIA WITH ❤",style: TextStyle(fontSize: 12,
+                                        fontFamily: 'abc',fontWeight: FontWeight.bold,color: Color.fromARGB(255, 16, 4, 146)),),
+                  ),
+                ],
+              ),
+            ), 
+          ),
+        body: Container(
+           height: MediaQuery.of(context).size.height,
+           width: MediaQuery.of(context).size.width,
+             // Below is the code for Linear Gradient.
+           decoration: const BoxDecoration(
+               gradient: LinearGradient(
+               colors: [Colors.purple, Colors.blue],
+              begin: Alignment.bottomLeft,
+               end: Alignment.topRight,
+          ),
+        ),
+          child: 
+          FutureBuilder<List<SongModel>>(
+            future: _audioQuery.querySongs(
+              orderType: OrderType.ASC_OR_SMALLER,
+              uriType: UriType.EXTERNAL,
+              ignoreCase: true,
+              sortType: SongSortType.TITLE,
+            ),
+            builder: (context, item){
+              //loading content indicator
+              if(item.data == null){
+                return const Center(child: CircularProgressIndicator(),);
+              }
+              //no songs found
+              if(item.data!.isEmpty){
+                return const Center(child: Text("No Songs Found",style: TextStyle(color: Colors.white,fontSize: 30),),);
+              }
+
+              // Assigned SongModel for the List Searching
+              List<SongModel> songs = item.data!;
+              //showing the songs
+
+              if(songs.isEmpty)
+              {
+                return Column(
+                  children: [
+                    Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      keyboardType: TextInputType.text,
+                      controller: searchController,
+                      onChanged: (value) {
+                        //pass value for the search
+                        getSearch(songs);
+                      },
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        hintText: 'Search Songs',
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(width: 2,color: Color.fromARGB(255, 255, 255, 255)),
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(width: 2,color: Color.fromARGB(255, 55, 26, 247)),
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                    ),),
+                  ),
+                    const Center(child: Text("No Songs Found",style: TextStyle(color: Colors.white,fontSize: 30),),)
+                  ],
+                );
+              }
+
+              if(filterSongs.isEmpty)
+              {
+                return Column(
+                  children: [
+                    ElevatedButton(
+                    onPressed: () {
+                      getSongs(songs);
+                      searchController.clear();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.amberAccent, // Background color
+                      onPrimary: Colors.blue, // Text Color (Foreground color)
+                    ),
+                    child: const Text(
+                      'Get All Songs',
+                      style: TextStyle(fontSize: 25),
+                    ),
+                  ),
+                    Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      keyboardType: TextInputType.text,
+                      controller: searchController,
+                      onChanged: (value) {
+                        //pass value for the search
+                        getSearch(songs);
+                      },
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        hintText: 'Search Songs',
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(width: 2,color: Color.fromARGB(255, 255, 255, 255)),
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(width: 2,color: Color.fromARGB(255, 55, 26, 247)),
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                    ),),
+                  ),
+                    const Center(child: Text("No Songs Found",style: TextStyle(color: Colors.white,fontSize: 30),),)
+                  ],
+                );
+              }
+
+              return Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      getSongs(songs);
+                      searchController.clear();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.amberAccent, // Background color
+                      onPrimary: Colors.blue, // Text Color (Foreground color)
+                    ),
+                    child: const Text(
+                      'Get All Songs',
+                      style: TextStyle(fontSize: 25),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      keyboardType: TextInputType.text,
+                      controller: searchController,
+                      onChanged: (value) {
+                        //pass value for the search
+                        getSearch(songs);
+                      },
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        hintText: 'Search Songs',
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(width: 2,color: Color.fromARGB(255, 255, 255, 255)),
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(width: 2,color: Color.fromARGB(255, 55, 26, 247)),
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                    ),),
+                  ),
+                  // Text('${filterSongs.length}'),
+                  Expanded(
+                    child: 
+                      Scrollbar(
+                        trackVisibility: true,
+                        radius: Radius.circular(5),
+                        thickness: 7,
+                        child: ListView.builder(
+                          itemCount: filterSongs.length,
+                          itemBuilder: (context, index){
+                            return Container(
+                              margin: const EdgeInsets.only(top: 15.0, left: 12.0, right: 16.0),
+                              // padding: const EdgeInsets.only(top: 30.0, bottom: 30),
+                              decoration: BoxDecoration(
+                                color: Colors.amber,
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              child:ListTile(
+                                // textColor: Colors.red,
+                                title: Text(filterSongs[index].title,style: TextStyle(color: Color.fromARGB(255, 255, 0, 0),fontFamily: 'abc'),),
+                                subtitle: Text(filterSongs[index].displayName,
+                                  style: const TextStyle(
+                                    color: Color.fromARGB(255, 6, 25, 233),
+                                  ),
+                                ),
+                                // trailing: const Icon(Icons.more_vert),
+                                leading: QueryArtworkWidget(
+                                  id: filterSongs[index].id,
+                                  type: ArtworkType.AUDIO,
+                                  nullArtworkWidget: Image.network('https://www.freepnglogos.com/uploads/apple-music-logo-circle-png-28.png'),
+                                ),
+                                onTap: ()  {
+                                  //toast message showing he selected song title
+                                  // print("${context} You Selected:   " + item.data![index].title);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) =>  const SongScreen(),
+                                    settings: RouteSettings(
+                                      arguments: {'title' : filterSongs[index].title,
+                                            'id': filterSongs[index].id,'data': filterSongs[index].data,
+                                            'track':filterSongs[index].track,'album':filterSongs[index].album,
+                                            'artist':filterSongs[index].artist,'displayName':filterSongs[index].displayName,},
+                                    ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+                          }),
+                      ),
+                    ),
+                  ],
+                );
+            },
+          ),
+      ),
+    );  
+  }
+
+void requestStoragePermission() async
+{
+  if(!kIsWeb){
+      bool permissionStatus = await _audioQuery.permissionsStatus();
+      if(!permissionStatus){
+        await _audioQuery.permissionsRequest();
+      }
+
+      //ensure build method is called
+      setState(() { });
+    }
+}
+
+void getSearch(List<SongModel> songs)
+{
+  var text = searchController.text;
+  if (text.isEmpty) {
+    setState(() {
+      filterSongs = songs;
+    });
+  }
+  print(songs.where((SongModel item) => item.title.toLowerCase().contains(text.toLowerCase())).toList());
+  print(text);
+  setState(() {
+    // search = text;
+    filterSongs = songs.where((SongModel item) => item.title.toLowerCase().contains(text.toLowerCase())).toList();
+  });
+  print(filterSongs.length);
+}
+
+void getSongs(songs)
+{
+  setState(() {
+    filterSongs = songs;
+  });
+}
+
+}

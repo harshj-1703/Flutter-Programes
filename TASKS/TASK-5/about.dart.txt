@@ -1,0 +1,125 @@
+import 'package:JAY_SHREE_RAM/main.dart';
+import 'package:flutter/material.dart';
+
+class AboutScreen extends StatefulWidget {
+  const AboutScreen({super.key});
+
+  @override
+  State<AboutScreen> createState() => _AboutScreenState();
+}
+
+class _AboutScreenState extends State<AboutScreen> {
+  @override
+  Widget build(BuildContext context) {
+   return Scaffold(  //scaffold
+      backgroundColor: Colors.transparent,
+        appBar: AppBar(   //appbar for show scaffold title
+            iconTheme: IconThemeData(color: Colors.white,size: 32),
+            centerTitle: true,
+            title: Text('ABOUT',style: TextStyle(color: Colors.white,fontSize: 28,fontFamily: 'Times New Roman'),), //title of scaffold
+            backgroundColor: Color.fromARGB(255, 29, 69, 214),
+          ),
+          drawer: Drawer(
+            child: Container(
+              color: Color.fromARGB(255, 202, 234, 247),
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  SizedBox(
+                    height: 150.0,
+                    child: DrawerHeader(
+                        // ignore: sort_child_properties_last
+                        child: Row(
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: Image.network('https://www.freepnglogos.com/uploads/apple-music-logo-circle-png-28.png',height: 60,width: 60,),
+                            ),
+                              // Icon(Icons.music_note,size: 32,color: Colors.white,),
+                            Padding(padding: EdgeInsets.all(7),
+                              child: Text('MUSIC', style: TextStyle(color: Colors.white,
+                                          fontSize: 30,fontFamily: 'Times New Roman',fontWeight: FontWeight.bold)),
+                            ),
+                          ],
+                        ),
+                        decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 29, 69, 214),
+                        ),
+                      ),
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.home,size: 30,color: Color.fromARGB(255, 15, 5, 111),),
+                      title: const Text('HOME',style: TextStyle(fontFamily: 'Times New Roman',
+                            fontSize: 25,color: Color.fromARGB(255, 15, 5, 111),fontWeight: FontWeight.w700),),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const MyScreen()),
+                      );
+                    },
+                  ),
+                  Container(
+                    margin: EdgeInsets.all(5),
+                    color: Colors.lightBlueAccent,
+                    child: ListTile(
+                      leading: Icon(Icons.alternate_email,size: 30,color: Color.fromARGB(255, 15, 5, 111),),
+                      title: const Text('ABOUT',style: TextStyle(fontFamily: 'Times New Roman',
+                            fontSize: 25,color: Color.fromARGB(255, 15, 5, 111),fontWeight: FontWeight.w700),),
+                      onTap: () {
+                        Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const AboutScreen()),
+                      );
+                      },
+                    ),
+                  ),
+                  ListTile(),ListTile(),ListTile(),ListTile(),ListTile(),ListTile(),ListTile(),
+                  ListTile(
+                    contentPadding: EdgeInsets.fromLTRB(75,35,0,0),
+                    title: Text("MADE IN INDIA WITH ❤",style: TextStyle(fontSize: 12,
+                                        fontFamily: 'Times New Roman',fontWeight: FontWeight.bold,color: Color.fromARGB(255, 11, 0, 138)),),
+                  ),
+                ],
+              ),
+            ), 
+          ),
+
+          body: Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+              // Below is the code for Linear Gradient.
+            decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                colors: [Colors.purple, Colors.blue],
+                begin: Alignment.bottomLeft,
+                end: Alignment.topRight,
+            ),
+          ),
+          child: 
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('MADE IN INDIA WITH ❤',style: TextStyle(color: Colors.white,
+                                        fontSize: 25,fontFamily: 'abc',fontWeight: FontWeight.bold),),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('DEVELOPED BY :',style: TextStyle(color: Colors.white,
+                                        fontSize: 10,fontFamily: 'Times New Roman',fontWeight: FontWeight.bold),),
+                ),
+                Padding(padding: const EdgeInsets.all(5),
+                child: Text(' HARSH JOLAPARA 🇮🇳',style: TextStyle(color: Colors.white,
+                                        fontSize: 25,fontFamily: 'abc',fontWeight: FontWeight.bold,fontStyle: FontStyle.italic),),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+  }
+}
