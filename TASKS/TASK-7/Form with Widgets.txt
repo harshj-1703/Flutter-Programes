@@ -1,0 +1,420 @@
+/*
+TASK:-6 -> Create Signup Form and Store Details in API and also in SharedPref.
+*/
+// import 'dart:convert';
+import 'package:flutter/material.dart';     //importing packages in flutter
+import 'package:intl/intl.dart';
+
+void main()
+{
+  runApp(MaterialApp(home: MyApp(),
+    title: 'SIGN IN',   //app name shown from package name and for main title this is.
+    theme: ThemeData(primarySwatch: Colors.cyan),));    //for run a code here class MyApp for run
+}
+
+//shortcut for stateless is stl
+class MyApp extends StatelessWidget {       //stateless widget class
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MyScreen();                  //return to statefullwidget of MyScreen class
+  }
+}
+
+//shortcut for stateless is stf
+class MyScreen extends StatefulWidget {
+  const MyScreen({Key? key}) : super(key: key);
+
+  @override
+  State<MyScreen> createState() => _MyScreenState();
+}
+
+//Gender value
+enum Gender { Male, Female, Other }
+
+class _MyScreenState extends State<MyScreen> {
+  var name = '';
+  var email = '';
+  var password = '';
+  var confirmPassword = '';
+  var date = '';
+  var time = '';
+  bool switchValue = false;
+  bool checkSport = false;
+  bool checkMusic = false;
+  bool checkReading = false;
+  double age = 0;
+
+  Gender? groupGender = Gender.Male;
+
+  TextEditingController nameText = TextEditingController();
+  TextEditingController emailText = TextEditingController();
+  TextEditingController passwordText = TextEditingController();
+  TextEditingController confirmPasswordText = TextEditingController();
+  TextEditingController dateInput = TextEditingController();
+  TextEditingController timeInput = TextEditingController();
+
+  @override
+  void initState() {
+    dateInput.text = ""; //set the initial value of text field
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(  //scaffold
+        appBar: AppBar(   //appbar for show scaffold title
+            iconTheme: IconThemeData(color: Colors.white,size: 32),
+            centerTitle: true,
+            title: Text('SIGN IN',style: TextStyle(color: Colors.white,fontSize: 28,fontFamily: 'Times New Roman',fontWeight: FontWeight.bold),), //title of scaffold
+            backgroundColor: Color.fromARGB(255, 29, 69, 214),
+          ),
+        body: Padding(
+          padding: const EdgeInsets.all(10),
+          child: ListView(
+          children: <Widget>[
+            Container(
+                alignment: Alignment.center,
+                padding: const EdgeInsets.all(10),
+                child: const Text(
+                  'SIGNUP',
+                  style: TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 30),
+                )),
+              Container(
+                padding: const EdgeInsets.all(10),
+                child: TextField(
+                  maxLength: 50,
+                  controller: nameText,
+                  decoration: const InputDecoration(
+                    counter: Offstage(),
+                    border: OutlineInputBorder(),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(width: 2,color: Colors.amber),
+                    ),
+                    labelText: 'Name',
+                  ),
+                ),
+            ),
+            Container(
+              padding: const EdgeInsets.all(10),
+              child: TextField(
+                keyboardType: TextInputType.emailAddress,
+                maxLength: 40,
+                controller: emailText,
+                decoration: const InputDecoration(
+                  counter: Offstage(),
+                  border: OutlineInputBorder(),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(width: 2,color: Colors.amber),
+                  ),
+                  labelText: 'Email',
+                ),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+              child: TextFormField(
+                obscureText: true,
+                maxLength: 20,
+                controller: passwordText,
+                decoration: const InputDecoration(
+                  counter: Offstage(),
+                  border: OutlineInputBorder(),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(width: 2,color: Colors.amber),
+                  ),
+                  labelText: 'Password',
+                ),
+              ),
+            ),
+            Container(
+                padding: const EdgeInsets.fromLTRB(10,10,10,10),
+                child: TextFormField(
+                  obscureText: true,
+                  maxLength: 10,
+                  controller: confirmPasswordText,
+                  decoration: const InputDecoration(
+                    counter: Offstage(),
+                    border: OutlineInputBorder(),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(width: 2,color: Colors.amber),
+                    ),
+                    labelText: 'Confirm Password',
+                  ),
+                ),
+            ),
+            Column(
+              children: [
+                const Text('DOB : ',
+                  style: TextStyle
+                      (color: Color.fromARGB(255, 0, 20, 242),fontSize: 18,fontWeight: FontWeight.bold,),),
+                Container(
+                  padding: EdgeInsets.fromLTRB(10,0,10,10),
+                  height: MediaQuery.of(context).size.width / 5,
+                  child: Center(
+                      child: TextField(
+                    controller: dateInput,
+                    //editing controller of this TextField
+                    decoration: const InputDecoration(
+                        icon: Icon(Icons.calendar_today), //icon of text field
+                        labelText: "Enter Date" //label text of field
+                        ),
+                    readOnly: true,
+                    onTap: () async {
+                      DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(1950),
+                          lastDate: DateTime(2100));
+
+                      if (pickedDate != null) {
+                        print(pickedDate);
+                        String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
+                        print(
+                            formattedDate);
+                        setState(() {
+                          dateInput.text =
+                              formattedDate;
+                        });
+                      } else {
+                        print("Date is not selected");
+                      }
+                    },
+                  ))),
+                  const Text('Born Time : ',
+                  style: TextStyle
+                      (color: Color.fromARGB(255, 0, 20, 242),fontSize: 18,fontWeight: FontWeight.bold,),),
+                  Container(
+                  padding: EdgeInsets.fromLTRB(10,0,10,10),
+                  height: MediaQuery.of(context).size.width / 5,
+                  child: Center(
+                      child: TextField(
+                    controller: timeInput,
+                    decoration: const InputDecoration(
+                        icon: Icon(Icons.calendar_today), //icon of text field
+                        labelText: "Enter Time" //label text of field
+                        ),
+                    readOnly: true,
+                    onTap: () async {
+                      TimeOfDay? pickedTime = await showTimePicker(
+                          initialTime: TimeOfDay.now(),
+                          context: context,
+                      );
+                      if (pickedTime != null) {
+                        print(pickedTime.format(context));
+                        DateTime parsedTime = DateFormat.jm().parse(pickedTime.format(context).toString());
+                        print(parsedTime);
+                        String formattedTime = DateFormat('HH:mm:ss').format(parsedTime);
+                        print(formattedTime);
+
+                        setState(() {
+                          timeInput.text = formattedTime;
+                        });
+                      } else {
+                        print("Time is not selected");
+                      }
+                    },
+                  ))),
+              ],
+            ),
+            Padding(
+              padding: EdgeInsets.all(10),
+              child: Column(
+              children: [
+                const Text('Gender : ',
+                  style: TextStyle
+                    (color: Color.fromARGB(255, 0, 20, 242),fontSize: 18,fontWeight: FontWeight.bold,),),
+                ListTile(
+                  title: const Text('Male',style: TextStyle(color: Color.fromARGB(255, 0, 20, 242),fontSize: 15),),
+                  leading: Radio<Gender>(
+                    value: Gender.Male,
+                    groupValue: groupGender,
+                    onChanged: (Gender? value) {
+                      setState(() {
+                        groupGender = value;
+                      });
+                      print(value);
+                    },
+                  ),
+                ),
+                ListTile(
+                  title: const Text('Female',style: TextStyle(color: Color.fromARGB(255, 0, 20, 242),fontSize: 15),),
+                  leading: Radio<Gender>(
+                    value: Gender.Female,
+                    groupValue: groupGender,
+                    onChanged: (Gender? value) {
+                      setState(() {
+                        groupGender = value;
+                      });
+                      print(value);
+                    },
+                  ),
+                ),
+                ListTile(
+                  title: const Text('Other',style: TextStyle(color: Color.fromARGB(255, 0, 20, 242),fontSize: 15),),
+                  leading: Radio<Gender>(
+                    value: Gender.Other,
+                    groupValue: groupGender,
+                    onChanged: (Gender? value) {
+                      setState(() {
+                        groupGender = value;
+                      });
+                      print(value);
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+              padding: EdgeInsets.all(10),
+              child: Column(
+              children: [
+                const Text('Hobby : ',
+                  style: TextStyle
+                    (color: Color.fromARGB(255, 0, 20, 242),fontSize: 18,fontWeight: FontWeight.bold,),),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Sports : ',
+                      style: TextStyle
+                        (color: Color.fromARGB(255, 0, 20, 242),fontSize: 14,),),
+                    Checkbox(
+                      value: checkSport,
+                      onChanged: (value) {
+                        setState(() {
+                          checkSport = value!;
+                        });
+                        print(checkSport);
+                      },
+                    ),
+                    const Text('Music : ',
+                      style: TextStyle
+                        (color: Color.fromARGB(255, 0, 20, 242),fontSize: 14,),),
+                    Checkbox(
+                      value: checkMusic,
+                      onChanged: (value) {
+                        setState(() {
+                          checkMusic = value!;
+                        });
+                        print(checkMusic);
+                      },
+                    ),
+                    const Text('Reading : ',
+                      style: TextStyle
+                        (color: Color.fromARGB(255, 0, 20, 242),fontSize: 14,),),
+                    Checkbox(
+                      value: checkReading,
+                      onChanged: (value) {
+                        setState(() {
+                          checkReading = value!;
+                        });
+                        print(checkReading);
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Column(
+            children: [
+              Text('Age : ${age.toInt()}',style: TextStyle
+                  (color: Color.fromARGB(255, 0, 20, 242),fontSize: 18,fontWeight: FontWeight.bold,),),
+              Slider(
+                min: 0,
+                max: 100,
+                activeColor: Colors.blueAccent,
+                thumbColor: Colors.amber,
+                value: age, 
+                onChanged: ((value) {
+                  setState(() {
+                    age = value;
+                  });
+                  print('${age.toInt()}');
+                }),
+              ),
+            ],
+          ),
+          Padding(
+            padding: EdgeInsets.all(10),
+            child: Row(
+            children: [
+              const Text('Accept Terms : ',style: TextStyle
+                  (color: Color.fromARGB(255, 0, 20, 242),fontSize: 18,fontWeight: FontWeight.bold,),),
+              Switch(  
+                value: switchValue,  
+                onChanged: ((value)
+                  {
+                    if(switchValue == true)
+                    {
+                      setState(() {
+                        switchValue = false;
+                      });
+                    }
+                    else
+                    {
+                      setState(() {
+                        switchValue = true;
+                      });
+                    }
+                  }
+                ),  
+                activeColor: Colors.blue, 
+                inactiveThumbColor: Colors.redAccent,  
+              ),
+            ],
+          ),
+        ),
+          Container(
+              height: 50,
+              padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+              child: ElevatedButton(
+                child: const Text('SignUp'),
+                onPressed: () {
+                  submit();
+                },
+              )
+          ),
+          ],
+        )
+        )
+      );  
+}
+
+showSnackBar(String message)
+{
+  var SnackBarVariable = SnackBar(content: Text(message),
+    backgroundColor: Colors.deepOrange,
+    behavior: SnackBarBehavior.floating,
+    width: 300,
+    duration: const Duration(seconds: 2));
+  ScaffoldMessenger.of(context).showSnackBar(SnackBarVariable);
+}
+
+void submit()
+{
+  setState(() {
+    name = nameText.text;
+    email = emailText.text;
+    password = passwordText.text;
+    date = dateInput.text;
+    time = timeInput.text;
+  });
+  print("Name : ${name}");
+  print("Email : ${email}");
+  print("Password : ${password}");
+  print("Date : ${date}");
+  print("Time : ${time}");
+  print("Gender : ${groupGender.toString().split('.').last}");
+  print("Sports : ${checkSport}");
+  print("Music : ${checkMusic}");
+  print("Reading : ${checkReading}");
+  print("Age : ${age.toInt()}");
+}
+
+}
