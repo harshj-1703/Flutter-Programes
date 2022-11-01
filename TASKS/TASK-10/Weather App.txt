@@ -42,8 +42,8 @@ class _MyScreenState extends State<MyScreen> {
 
   @override
   void initState() {
-    super.initState();
     api1();
+    super.initState();
   }
 
   @override
