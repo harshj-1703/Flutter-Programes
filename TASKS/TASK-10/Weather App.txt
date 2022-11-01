@@ -1,0 +1,106 @@
+/*
+10- Weather App (CityName,Current Weather)
+	https://openweathermap.org/
+*/
+import 'dart:convert';
+import 'package:flutter/material.dart';     //importing packages in flutter
+import 'package:http/http.dart' as http;
+
+void main()
+{
+  runApp(MaterialApp(home: MyApp(),
+    title: 'HARSH',   //app name shown from package name and for main title this is.
+    theme: ThemeData(primarySwatch: Colors.cyan),));    //for run a code here class MyApp for run
+}
+
+//shortcut for stateless is stl
+class MyApp extends StatelessWidget {       //stateless widget class
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MyScreen();                  //return to statefullwidget of MyScreen class
+  }
+}
+
+//shortcut for stateless is stf
+class MyScreen extends StatefulWidget {
+  const MyScreen({Key? key}) : super(key: key);
+
+  @override
+  State<MyScreen> createState() => _MyScreenState();
+}
+
+class _MyScreenState extends State<MyScreen> {
+
+  var city = '';
+  var lat_long = '';
+  var temp = '';
+  var pressure = '';
+  var humidity = '';
+  var windSpeed = '';
+
+  @override
+  void initState() {
+    super.initState();
+    api1();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(  //scaffold
+        appBar: AppBar(   //appbar for show scaffold title
+            iconTheme: const IconThemeData(color: Colors.white,size: 32),
+            centerTitle: true,
+            title: const Text('WEATHER',style: TextStyle(color: Colors.white,fontSize: 28,fontFamily: 'Times New Roman',fontWeight: FontWeight.bold),), //title of scaffold
+            backgroundColor: const Color.fromARGB(255, 29, 69, 214),
+          ),
+        body: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Center(
+                child: Column(
+                  children: [
+                    Text('City name : $city',style: const TextStyle(fontSize: 35,color: Colors.deepPurple,fontWeight: FontWeight.bold),),
+                    Text('Temp : $temp °C',style: const TextStyle(fontSize: 30,color: Colors.red),),
+                    Text('Lat-Long : $lat_long',style: const TextStyle(fontSize: 17,color: Colors.amber),),
+                    Text('Pressure : $pressure',style: const TextStyle(fontSize: 15,color: Colors.deepOrange),),
+                    Text('Humidity : $humidity',style: const TextStyle(fontSize: 15,color: Colors.amberAccent),),
+                    Text('Wind Speed : $windSpeed',style: const TextStyle(fontSize: 15,color: Colors.lightBlue),),
+                  ],
+                ),
+                ),
+              ],
+            ),
+        ),
+        );
+}
+
+void api1() async
+{
+  if(city == '')
+  {
+    setState(() {
+      city = 'Loading Data....';
+      lat_long = 'Loading Data....';
+      temp = 'Loading Data....';
+      pressure = 'Loading Data....';
+      humidity = 'Loading Data....';
+      windSpeed = 'Loading Data....';
+    });
+  }
+  var url = Uri.parse('https://api.openweathermap.org/data/2.5/weather?lat=22.3053263&lon=70.8028377&appid=55dfa2348fcd185ac2b4008afdf8acc8');
+  var response = await http.get(url);
+  setState(() {
+    city = json.decode(response.body)['name'];
+    lat_long = "${json.decode(response.body)["coord"]["lat"]} , ${json.decode(response.body)["coord"]["lon"]}";
+    temp = ((json.decode(response.body)["main"]["temp"]) - 273.15).toStringAsFixed(2);
+    pressure = json.decode(response.body)["main"]['pressure'].toString();
+    humidity = json.decode(response.body)['main']['humidity'].toString();
+    windSpeed = json.decode(response.body)['wind']['speed'].toString();
+  });
+}
+
+}
