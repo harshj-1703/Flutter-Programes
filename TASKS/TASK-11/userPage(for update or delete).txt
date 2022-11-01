@@ -1,0 +1,163 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:first_app/Users.dart';
+import 'package:flutter/material.dart';
+
+class UserMain extends StatefulWidget {
+  const UserMain({super.key});
+
+  @override
+  State<UserMain> createState() => _UserMainState();
+}
+
+class _UserMainState extends State<UserMain> {
+
+  @override
+  Widget build(BuildContext context) {
+
+  final doc_id = ModalRoute.of(context)!.settings.arguments as List;
+  TextEditingController nameText = TextEditingController(text: doc_id[1]);
+  TextEditingController emailText = TextEditingController(text: doc_id[2]);
+  TextEditingController mobileText = TextEditingController(text: doc_id[4]);
+  TextEditingController passwordText = TextEditingController(text: doc_id[3]);
+
+    return Scaffold(  //scaffold
+        appBar: AppBar(   //appbar for show scaffold title
+            iconTheme: const IconThemeData(color: Colors.white,size: 32),
+            centerTitle: true,
+            title: const Text('EDIT USER',style: TextStyle(color: Colors.white,fontSize: 28,fontFamily: 'Times New Roman',fontWeight: FontWeight.bold),), //title of scaffold
+            backgroundColor: const Color.fromARGB(255, 29, 69, 214),
+          ),
+      body : Padding(
+          padding: const EdgeInsets.all(10),
+          child: ListView(
+          children: <Widget>[
+            Container(
+                alignment: Alignment.center,
+                padding: const EdgeInsets.all(10),
+                child: const Text(
+                  'Update Details',
+                  style: TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 15),
+                )),
+              Container(
+                padding: const EdgeInsets.all(10),
+                child: TextField(
+                  maxLength: 50,
+                  controller: nameText,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(width: 2,color: Colors.amber),
+                    ),
+                    labelText: 'Name',
+                  ),
+                ),
+            ),
+            Container(
+              padding: const EdgeInsets.all(10),
+              child: TextField(
+                keyboardType: TextInputType.emailAddress,
+                maxLength: 40,
+                controller: emailText,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(width: 2,color: Colors.amber),
+                  ),
+                  labelText: 'Email',
+                ),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+              child: TextFormField(
+                obscureText: true,
+                maxLength: 20,
+                controller: passwordText,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(width: 2,color: Colors.amber),
+                  ),
+                  labelText: 'Password',
+                ),
+              ),
+            ),
+            Container(
+                padding: const EdgeInsets.all(10),
+                child: TextFormField(
+                  maxLength: 10,
+                  controller: mobileText,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(width: 2,color: Colors.amber),
+                    ),
+                    labelText: 'Mobile Number',
+                  ),
+                ),
+            ),
+            Container(
+                height: 50,
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                child: ElevatedButton(
+                  child: const Text('UPDATE USER'),
+                  onPressed: () {
+                    final user = Users(
+                        name: nameText.text, 
+                        email: emailText.text, 
+                        password: passwordText.text, 
+                        mobileno: mobileText.text);
+                    updateUser(user,doc_id[0]);
+                  },
+                )
+            ),
+            Container(
+                height: 55,
+                padding: const EdgeInsets.fromLTRB(10, 15, 10, 0),
+                child: ElevatedButton(
+                  child: const Text('DELETE USER'),
+                  onPressed: () {
+                    deleteUser(doc_id[0]);
+                    Navigator.pop(context);
+                  },
+                )
+            ),
+          ],
+        )
+        ),
+    );
+  }
+
+//Update User
+Future updateUser(Users user,docId) async
+{
+  final varUser = FirebaseFirestore.instance.collection('Users').doc(docId);
+  user.id = varUser.id;
+
+  final json = user.toJson();
+  await varUser.update(json);
+
+  showSnackBar('User Updated');
+}
+
+Future deleteUser(docId) async
+{
+  FirebaseFirestore.instance.collection('Users').doc(docId).delete();
+  showSnackBar('User Deleted');
+}
+
+showSnackBar(String message)
+{
+  var SnackBarVariable = SnackBar(content: Text(message),
+    backgroundColor: Colors.deepOrange,
+    behavior: SnackBarBehavior.floating,
+    width: 300,
+    duration: const Duration(seconds: 2));
+  ScaffoldMessenger.of(context).showSnackBar(SnackBarVariable);
+}
+
+}

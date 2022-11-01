@@ -1,0 +1,68 @@
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:first_app/Users.dart';
+import 'userPage.dart';
+
+class AllUsers extends StatefulWidget {
+  const AllUsers({super.key});
+
+  @override
+  State<AllUsers> createState() => _AllUsersState();
+}
+
+class _AllUsersState extends State<AllUsers> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(  //scaffold
+        appBar: AppBar(   //appbar for show scaffold title
+            iconTheme: const IconThemeData(color: Colors.white,size: 32),
+            centerTitle: true,
+            title: const Text('ALL USERS',style: TextStyle(color: Colors.white,fontSize: 28,fontFamily: 'Times New Roman',fontWeight: FontWeight.bold),), //title of scaffold
+            backgroundColor: const Color.fromARGB(255, 29, 69, 214),
+          ),
+        body: StreamBuilder<List<Users>>(
+          stream: readUsers(),
+          builder: (context, snapshot) {
+            if(snapshot.hasError)
+            {
+              return const Text('Error Occured');
+            }
+            else if(snapshot.hasData){
+              final users = snapshot.data!;
+        
+              return ListView(
+                children: users.map(buildUser).toList(),
+              );
+            }
+            else
+            {
+              return const Center(child: CircularProgressIndicator(),);
+            }
+          }),
+        );
+
+}
+
+Stream<List<Users>> readUsers() => FirebaseFirestore.instance
+    .collection('Users').orderBy('name', descending: false)
+    .snapshots()
+    .map((snapshot) => snapshot.docs.map((doc) => Users.fromJson(doc.data())).toList());
+
+Widget buildUser(Users user) => Card(
+    child: ListTile(
+    // leading: CircleAvatar(child: Text('${user.email}'),),
+    title: Text(user.name),
+    subtitle: Text("Email : ${user.email} , MobileNo :  ${user.mobileno}"),
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const UserMain(),
+        settings: RouteSettings(
+            arguments: [user.id,user.name,user.email,user.password,user.mobileno],
+          ),
+        ));
+    },
+  ),
+);
+
+}

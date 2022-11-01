@@ -1,0 +1,29 @@
+class Users
+{
+  String id;
+  final String name;
+  final String email;
+  final String password;
+  final String mobileno;
+
+  Users({this.id = '', 
+      required this.name, 
+      required this.email, 
+      required this.password, 
+      required this.mobileno});
+
+  Map<String, dynamic> toJson() => {
+    'id' : id,
+    'name' : name,
+    'email' : email,
+    'password' : password,
+    'mobileno' : mobileno,
+  };
+
+  static Users fromJson(Map<String, dynamic> json) => Users(
+    id: json['id'], 
+    name: json['name'], 
+    email: json['email'], 
+    password: json['password'], 
+    mobileno: json['mobileno']);
+}

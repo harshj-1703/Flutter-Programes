@@ -1,0 +1,185 @@
+/*
+11-FireBase CRUD Operation.
+*/
+import 'dart:convert';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';     //importing packages in flutter
+import 'package:firebase_core/firebase_core.dart';
+import 'allUsers.dart';
+import 'users.dart';
+
+Future main() async
+{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
+  runApp(MaterialApp(home: MyApp(),
+    title: 'HARSH',   //app name shown from package name and for main title this is.
+    theme: ThemeData(primarySwatch: Colors.cyan),));    //for run a code here class MyApp for run
+}
+
+//shortcut for stateless is stl
+class MyApp extends StatelessWidget {       //stateless widget class
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MyScreen();                  //return to statefullwidget of MyScreen class
+  }
+}
+
+//shortcut for stateless is stf
+class MyScreen extends StatefulWidget {
+  const MyScreen({Key? key}) : super(key: key);
+
+  @override
+  State<MyScreen> createState() => _MyScreenState();
+}
+
+class _MyScreenState extends State<MyScreen> {
+
+  TextEditingController nameText = TextEditingController();
+  TextEditingController emailText = TextEditingController();
+  TextEditingController mobileText = TextEditingController();
+  TextEditingController passwordText = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(  //scaffold
+        appBar: AppBar(   //appbar for show scaffold title
+            iconTheme: const IconThemeData(color: Colors.white,size: 32),
+            centerTitle: true,
+            title: const Text('HARSH',style: TextStyle(color: Colors.white,fontSize: 28,fontFamily: 'Times New Roman',fontWeight: FontWeight.bold),), //title of scaffold
+            backgroundColor: const Color.fromARGB(255, 29, 69, 214),
+          ),
+        body: Padding(
+          padding: const EdgeInsets.all(10),
+          child: ListView(
+          children: <Widget>[
+            Container(
+                alignment: Alignment.center,
+                padding: const EdgeInsets.all(10),
+                child: const Text(
+                  'SIGNUP',
+                  style: TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 30),
+                )),
+              Container(
+                padding: const EdgeInsets.all(10),
+                child: TextField(
+                  maxLength: 50,
+                  controller: nameText,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(width: 2,color: Colors.amber),
+                    ),
+                    labelText: 'Name',
+                  ),
+                ),
+            ),
+            Container(
+              padding: const EdgeInsets.all(10),
+              child: TextField(
+                keyboardType: TextInputType.emailAddress,
+                maxLength: 40,
+                controller: emailText,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(width: 2,color: Colors.amber),
+                  ),
+                  labelText: 'Email',
+                ),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+              child: TextFormField(
+                obscureText: true,
+                maxLength: 20,
+                controller: passwordText,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(width: 2,color: Colors.amber),
+                  ),
+                  labelText: 'Password',
+                ),
+              ),
+            ),
+            Container(
+                padding: const EdgeInsets.all(10),
+                child: TextFormField(
+                  maxLength: 10,
+                  controller: mobileText,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(width: 2,color: Colors.amber),
+                    ),
+                    labelText: 'Mobile Number',
+                  ),
+                ),
+            ),
+            Container(
+                height: 50,
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                child: ElevatedButton(
+                  child: const Text('ADD USER'),
+                  onPressed: () {
+                    final user = Users(
+                        name: nameText.text, 
+                        email: emailText.text, 
+                        password: passwordText.text, 
+                        mobileno: mobileText.text);
+                    addUser(user);
+                  },
+                )
+            ),
+            Container(
+                height: 55,
+                padding: const EdgeInsets.fromLTRB(10, 15, 10, 0),
+                child: ElevatedButton(
+                  child: const Text('SHOW USERS'),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const AllUsers()),
+                    );
+                  },
+                )
+            ),
+          ],
+        )
+        )
+      );
+}
+
+//Insert User
+Future addUser(Users user) async
+{
+  final varUser = FirebaseFirestore.instance.collection('Users').doc();
+  user.id = varUser.id;
+
+  final json = user.toJson();
+  await varUser.set(json);
+
+  showSnackBar('User Added');
+}
+
+showSnackBar(String message)
+{
+  var SnackBarVariable = SnackBar(content: Text(message),
+    backgroundColor: Colors.deepOrange,
+    behavior: SnackBarBehavior.floating,
+    width: 300,
+    duration: const Duration(seconds: 2));
+  ScaffoldMessenger.of(context).showSnackBar(SnackBarVariable);
+}
+
+}
