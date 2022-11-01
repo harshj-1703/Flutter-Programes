@@ -1,6 +1,3 @@
-/*
-TASK:-6 -> Create Signup Form and Store Details in API and also in SharedPref.
-*/
 import 'dart:convert';
 import 'package:flutter/material.dart';     //importing packages in flutter
 import 'package:http/http.dart' as http;

@@ -1,5 +1,7 @@
 /*
-TASK:-6 -> Create Signup Form and Store Details in API and also in SharedPref.
+TASK-7-Create Form having all Widget which help to take values from user.
+	Text,TextField,Switch,Slider,DatePicker,TimePicker,Button,CheckBox,Radio and OnSubmit 
+	Print Value.
 */
 // import 'dart:convert';
 import 'package:flutter/material.dart';     //importing packages in flutter
