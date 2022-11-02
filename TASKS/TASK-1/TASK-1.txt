@@ -1,6 +1,4 @@
 //TASK-1 -> Counter App with Local Data.
-import 'dart:async';
-import 'dart:developer';
 import 'package:flutter/material.dart';     //importing packages in flutter
 import 'package:shared_preferences/shared_preferences.dart';
 void main()
@@ -103,6 +101,10 @@ void get() async
 {
   var pref = await SharedPreferences.getInstance();
   final int? count = pref.getInt('counter');
+  if(count == null)
+  {
+    pref.setInt('counter',0);
+  }
   print(count);
   setState(() {
     counter = count!;
